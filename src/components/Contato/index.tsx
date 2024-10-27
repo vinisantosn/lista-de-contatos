@@ -9,21 +9,20 @@ import {
   AiOutlineClose
 } from 'react-icons/ai'
 
-// import { remover, editar, alteraStatus } from '../../store/Reducers/tarefas'
 import ContatoClass from '../../models/Contato'
 import { editar, remover } from '../../store/Reducers/contatos'
-// import { Botao, BotaoSalvar } from '../../styles'
-// import * as enums from '../../utils/enums/Contato'
+import { Botao, BotaoSalvar } from '../../styles'
 
 type Props = ContatoClass
 
 const Contato = ({
-  nome,
+  nome: nomeOriginal,
   email: emailOriginal,
   telefone: telefoneOriginal,
   id
 }: Props) => {
   const dispatch = useDispatch()
+  const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [telefone, setTelefone] = useState('')
   const [estaEditando, setEstaEditando] = useState(false)
@@ -35,9 +34,13 @@ const Contato = ({
     if (emailOriginal.length > 0) {
       setEmail(emailOriginal)
     }
-  }, [telefoneOriginal, emailOriginal])
+    if (nomeOriginal.length > 0) {
+      setNome(nomeOriginal)
+    }
+  }, [nomeOriginal, telefoneOriginal, emailOriginal])
   function cancelarEdicao() {
     setEstaEditando(false)
+    setNome(nomeOriginal)
     setEmail(emailOriginal)
     setTelefone(telefoneOriginal)
   }
@@ -45,14 +48,18 @@ const Contato = ({
   return (
     <S.Card>
       <S.Infos>
-        <S.Nome>
-          {estaEditando && <em>Editando: </em>}
-          {nome}
-        </S.Nome>
+        {estaEditando && <em>Editando: </em>}
+        <S.CampoNome
+          ativo={!estaEditando}
+          disabled={!estaEditando}
+          value={nome}
+          onChange={(evento) => setNome(evento.target.value)}
+        ></S.CampoNome>
 
         <ul>
           <li>
             <S.CampoTelefone
+              ativo={!estaEditando}
               disabled={!estaEditando}
               value={telefone}
               onChange={(evento) => setTelefone(evento.target.value)}
@@ -60,6 +67,7 @@ const Contato = ({
           </li>
           <li>
             <S.CampoEmail
+              ativo={!estaEditando}
               disabled={!estaEditando}
               value={email}
               onChange={(evento) => setEmail(evento.target.value)}
@@ -70,16 +78,16 @@ const Contato = ({
       <S.Acoes>
         {!estaEditando ? (
           <>
-            <S.Botao onClick={() => setEstaEditando(true)}>
+            <Botao onClick={() => setEstaEditando(true)}>
               <AiOutlineEdit size={20} />
-            </S.Botao>
+            </Botao>
             <S.BotaoDeletar onClick={() => dispatch(remover(id))}>
               <AiOutlineDelete size={20} />
             </S.BotaoDeletar>
           </>
         ) : (
           <>
-            <S.BotaoSalvar
+            <BotaoSalvar
               onClick={() => {
                 dispatch(
                   editar({
@@ -93,7 +101,7 @@ const Contato = ({
               }}
             >
               <AiOutlineSave size={20} />
-            </S.BotaoSalvar>
+            </BotaoSalvar>
             <S.BotaoCancelar onClick={cancelarEdicao}>
               <AiOutlineClose size={20} />
             </S.BotaoCancelar>

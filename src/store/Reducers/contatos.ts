@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import Contato from '../../models/Contato'
 
+let nextId = 11
+
 type ContatoState = {
   itens: Contato[]
 }
@@ -73,12 +75,18 @@ const contatosSlice = createSlice({
   name: 'contatos',
   initialState: initialState,
   reducers: {
-    adicionar: (state, action: PayloadAction<number>) => {
-      state.itens = [
-        ...(state.itens = state.itens.filter(
-          (contato) => contato.id !== action.payload
-        ))
-      ]
+    adicionar: (state, action: PayloadAction<Omit<Contato, 'id'>>) => {
+      const nomeExiste = state.itens.some(
+        (contato) => contato.nome === action.payload.nome
+      )
+
+      if (!nomeExiste) {
+        const novoContato = {
+          ...action.payload,
+          id: nextId++
+        }
+        state.itens.push(novoContato)
+      }
     },
     remover: (state, action: PayloadAction<number>) => {
       state.itens = [

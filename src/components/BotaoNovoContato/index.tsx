@@ -1,2 +1,3 @@
-const BotaoNovoContato = () => <button type="submit">criar novo</button>
+import { Circulo } from './styles'
+const BotaoNovoContato = () => <Circulo to="/novo">+</Circulo>
 export default BotaoNovoContato
